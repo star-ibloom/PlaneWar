@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="dafeiji.css" />
+    <title>打飞机</title>
+</head>
+<body>
+    <div id="main_body" class="main">
+        <ul id="options" class="options">
+            <li value="1">开发模式</li>
+            <li value="2">简单模式</li>
+            <li value="3">中等模式</li>
+            <li value="4">困难模式</li>
+            
+        </ul>
+    </div>
+    <script>
+        function Engine(){
+            this.main_ele = document.getElementById("main_body");
+            this.options = document.getElementById("options");
+            this.hard_ele = this.options.children;
+
+            this.hard_status =  0;
+            this.init();
+        }
+
+        Engine.prototype = {
+            constructor : Engine,
+            init(){
+                for(let i =0;i< this.hard_ele.length;i++){
+                    this.hard_ele[i].onclick = function(){
+                        this.hard_status = 3-i;
+                        // console.log(this.hard_status);
+                        this.start_animation()
+                        .then(function(){
+                            this.start_game();
+                        }.bind(this));
+                    }.bind(this)
+                }
+            },
+            start_animation(){
+                this.options.remove();
+                // var logo = document.createElement("div");
+                // logo.className = "logo";
+                // document.body.appendChild(logo);
+                // var fpPlane = document.createElement("div");
+                // fpPlane.className = "loading";
+                // document.body.appendChild(fpPlane);
+                var admissionArray = [
+                    {
+                        className : "logo",
+                        ele : null
+                    },
+                    {
+                        className : "loading",
+                        ele : null
+                    }
+                ];
+                for(var i = 0 ; i < admissionArray.length;i++){
+                    admissionArray[i].ele = document.createElement("div");
+                    admissionArray[i].ele.className = admissionArray[i].className;
+                    document.body.appendChild(admissionArray[i].ele)
+                } 
+
+
+                var fp_ele = admissionArray[1].ele;
+                var fp_num = 0 ;
+                var fp_timer = setInterval(function(){
+                    fp_ele.style.background = `url(images/loading${++fp_num%3+1}.png) no-repeat`
+                },500);
+
+                var mb_num = 0;
+                var mb_timer = setInterval(function(){
+                    mb_num +=3;
+                    this.main_ele.style.backgroundPositionY = mb_num + "px";  
+                // console.log(mb_num)
+                    
+                }.bind(this),100);
+
+                return new Promise(function(succ){
+                    setTimeout(function(){
+                        clearInterval(fp_timer);
+                        clearInterval(mb_timer);
+                        for(var i = 0; i<admissionArray.length;i++){
+                            admissionArray[i].ele.remove();
+                        }
+                        succ("动画清理完毕");
+                    },1500)
+                })
+            },
+
+            start_game(){
+                // console.log(111)
+                // var mb_num = 0;
+                // var mb_timer = setInterval(function(){
+                //     mb_num +=3;
+                //     this.main_ele.style.backgroundPositionY = mb_num + "px";  
+                // }.bind(this),100);
+                // console.log(this.main_ele,this.hard_status)
+                this.mb_move();
+                // this
+                plane
+                .create()
+                .fire(this.hard_status);//
+
+            },
+
+            mb_move(){
+                var mb_num = 42 ; 
+                // console.log(this)
+                var mb_timer = setInterval(function(){
+                    mb_num = mb_num + ( 4 - this.hard_status)*5;
+                        this.main_ele.style.backgroundPositionY = mb_num + "px"; 
+                }.bind(this),100);   
+            }
+        }
+
+        
+
+        //  一下 hi 是四百的 
+        // function Mb(){
+        //     this.init();
+        // }
+        // Mb.prototype = {
+        //     constructor : Mb,
+        //     init(){
+        //         var mb_num = 0 ;                
+        //     },
+        //     move(mb_num){
+        //         var mb_timer = setInterval(function(){
+        //             mb_num = mb_num + ( 4 - this.hard_status);
+        //             this.main_ele.style.backgroundPositionY = mb_num + "px"; 
+        //         }.bind(this),100);
+        //     }
+        // }
+
+
+
+        function Plane(){
+            this.bulletList = [];
+            this.init();
+        }
+        Plane.prototype = {
+            constructor : Plane,
+            init(){
+                this.ele = document.createElement("div");
+                this.left = 0;
+                this.top = 0;
+                document.onmousemove = function(event){
+                    var e = event || window.event;
+                    
+                    
+                    var pos  = {
+                            left : e.clientX,
+                            top : e.clientY
+                        }
+                   
+                    this.plane_move(pos);
+                }.bind(this);
+                this.plane_gas();
+            },
+            create(){
+                this.ele.className = "my-warplain";
+                document.body.appendChild(this.ele);
+                return this;
+            },
+            plane_gas(){
+                var num = 0
+                var gas_timer  = setInterval(function(){
+                //    console.log(this)
+                    
+                    this.ele.style.background = `url(images/me${++num%2}.png) top no-repeat`;
+                }.bind(this),500)
+            },
+            plane_move(pos){
+
+                if(this.ele.offsetWidth && !this.minLeft && !this.maxLeft){
+                    var main = document.getElementById("main_body");
+                    this.minleft = main.offsetLeft;
+                    this.maxleft = main.offsetLeft + main.offsetWidth -  this.ele.offsetWidth;
+                    this.mintop = main.offsetTop + this.ele.offsetHeight/2; 
+                    this.maxtop = main.offsetTop + main.offsetHeight - this.ele.offsetHeight/2
+                }
+
+                var plane_left = pos.left - this.ele.offsetWidth/2;
+                var plane_top = pos.top - this.ele.offsetHeight/2;
+
+                plane_left = plane_left > this.maxleft ? this.maxleft : plane_left;
+                plane_left = plane_left < this.minleft ? this.minleft : plane_left;
+                plane_top = plane_top > this.maxtop ? this.maxtop : plane_top;
+                plane_top = plane_top < this.mintop ? this.mintop : plane_top;
+                
+                
+                this.ele.style.left = plane_left + "px";
+                this.ele.style.top = plane_top + "px";
+
+                this.pos = {
+                    left : plane_left,
+                    top : plane_top
+                }
+            },
+
+            fire(status){//
+                // console.log("fire");
+                var frequency;
+                switch(status){
+                    case 0 : frequency = 500;break;
+                    case 1 : frequency = 400;break;
+                    case 2 : frequency = 300;break;
+                    case 3 : frequency = 200;break;
+                }
+                setInterval(function(){
+                    new Bullet()
+                }.bind(this),frequency)
+            }
+        }
+
+
+        var plane = new Plane();
+        
+
+        function Bullet(){
+            this.init();
+        }
+
+        Bullet.prototype = {
+            constructor : Bullet,
+            init(){
+                this.ele = document.createElement("div");
+                this.ele.className = "bullet";
+                this.left = plane.pos.left;
+                this.top = plane.pos.top;
+                document.body.appendChild(this.ele);
+
+                this.left = plane.ele.offsetWidth / 2 + this.left - this.ele.offsetWidth / 2;
+                this.top = this.top - this.ele.offsetHeight;
+                this.ele.style.left = this.left + "px";
+                this.ele.style.top = this.top + "px";
+
+                this.bullet_move();
+            },
+            bullet_move(){
+                var speedX = 16;
+                var speedY = 50;
+                var count = 0;
+                this.bulletTimer = setInterval(function(){
+                    // if(count % 4 == 0){
+                    //     speedY = -speedY;
+                    //     this.ele.style.left = this.ele.offsetLeft + speedY + "px";
+                    // }
+                    if(++count >= 17){
+                        clearInterval(this.bulletTimer);
+                        this.bullet_die();
+                    }
+                    speedX += 2;
+                    this.ele.style.top = this.ele.offsetTop - speedX + "px";
+                }.bind(this),100)
+            },
+            bullet_die(){
+                if(this.eleList){
+                    for(let i = 0 ; i < this.eleList.length ; i++){
+                        this.eleList[i].className = "bullet_die";
+                        setTimeout(function(){
+                            this.eleList[i].remove();
+                        }.bind(this),100)
+                    }
+                }else{
+                    this.ele.className = "bullet_die";
+                    setTimeout(function(){
+                        this.ele.remove();  
+                    }.bind(this),100);
+                }
+            },
+            creaet_ele(){
+                var ele = document.createElement("div");
+                ele.className = "bullet";
+                this.left = plane.pos.left;
+                this.top = plane.pos.top;
+                this.left = plane.ele.offsetWidth / 2 + this.left - ele.offsetWidth / 2;
+                this.top = this.top - ele.offsetHeight;
+                ele.style.left = this.left + "px";
+                ele.style.top = this.top + "px";
+                document.body.appendChild(ele);
+                return ele;
+            }
+        }
+        
+
+
+
+
+        // var mb = new Mb();
+
+        new Engine();
+
+    </script>
+</body>
+</html>

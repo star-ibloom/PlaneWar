@@ -1,0 +1,84 @@
+body,h1,h3,h4,h2,h5,h6,ul,ol,p,fieldset,dd,dl,input,textarea,option,hr,td{margin:0;padding:0;}
+a{text-decoration:none; color:#333;}
+h1,h2,h3,h4,h5,h6,b,strong{font-weight:normal;}
+i,em{font-style:normal;}
+li{list-style:none;}
+img{border:0;display:block;}
+a,input{outline:none;}
+body{font:12px/1em "微软雅黑"; color:#666;}
+.clear:after{content:".";display:block;clear:both;height:0;visibility:hidden;}
+.clear{zoom:1;}
+.border0{border:0;}
+html,body{width:100%; height:100%; overflow: hidden;}
+
+
+/* 以上是全剧样式通配符 */
+
+.main{
+    margin: auto;
+    height: 100%;
+    width: 100%;
+    background: url(images/bg.jpg) repeat;
+    background-position-y: 0px;
+}
+.options{
+    width: 200px;
+    height: 300px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 180px;
+    margin:  auto;
+}
+.options li{
+    width: 200px;
+    height: 75px;
+    text-align: center;
+    line-height: 75px;
+    font-size: 28px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    background: #f40;
+    border-radius: 5px;
+	box-shadow: 0 0 2px 1px black;
+}
+.logo{
+	position: absolute;
+	left: 0; right: 0; top: 25%; 
+	margin: auto;
+	width: 428px; height: 104px;
+	background: url(images/logo.png) no-repeat;	
+}
+.loading{
+	position: absolute;
+	left: 0; right: 0; top: 60%;
+	margin: auto;
+	width: 192px; height: 41px;
+	background: url(images/loading1.png) no-repeat;
+}
+
+.my-warplain{
+    width: 98px;
+    height:122px;
+    position: absolute;
+    bottom: 24px; 
+    background: url(images/me0.png) top no-repeat;
+    left: 46%;
+    cursor: none;
+}
+
+.bullet{
+    position:  absolute;
+    width: 15px;
+    height: 40px;
+    background: url(images/bullet.png);
+    background-size: 100% 100%;
+}
+.bullet_die{
+	position: absolute;
+	width: 41px; height: 39px;
+	background: url(images/die1.png) no-repeat;
+	margin-left: -18px;
+	background-size: 100% 100%;
+	
+}
